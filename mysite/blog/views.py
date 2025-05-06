@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Post
 
@@ -9,12 +9,15 @@ def post_list(request):
     # Pagination with 3 posts per page
     paginator = Paginator(post_list, 3)
     page_number = request.GET.get('page', 1)
-    posts = paginator.page(page_number)
-    return render(
-        request,
-        'blog/post/list.html',
-        {'posts': posts}
-    )
+    try:
+        posts = paginator.page(page_number)
+    except EmptyPage:
+        posts = []
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+            
+
+    return render(request,'blog/post/list.html',{'posts': posts})
 
 
 def post_detail(request, year, month, day, post):
