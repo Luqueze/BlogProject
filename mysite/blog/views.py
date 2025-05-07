@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm
+from django.core.mail import send_mail
 
 from .models import Post
 
@@ -12,13 +13,33 @@ def post_share(request, post_id):
         id=post_id,
         status=Post.Status.PUBLISHED
     )
-
+    sent = False
     if request.method == 'POST':
         # O formulário foi enviado
         form = EmailPostForm(request.POST)
         if form.is_valid():
             # Campos do formulário passaram na validação
             cd = form.cleaned_data
+            post_url = request.build_absolute_uri(
+                post.get_absolute_url()
+            )
+            subject = (
+ f"{cd['name']} ({cd['email']}) "
+ f"recommends you read {post.title}"
+            )
+            message = (
+ f"Read {post.title} at {post_url}\n\n"
+ f"{cd['name']}\'s comments: {cd['comments']}"
+            )
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=[cd['to']]
+            )
+
+            sent = True
+
             # ... enviar email
     else:
         form = EmailPostForm()
@@ -28,7 +49,8 @@ def post_share(request, post_id):
         'blog/post/share.html',
         {
             'post': post,
-            'form': form
+            'form': form,
+            'sent': sent
         }
     )
 
