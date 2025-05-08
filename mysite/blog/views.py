@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm
+from .forms import CommentForm, EmailPostForm
 from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
 
 from .models import Post
 
@@ -91,3 +92,33 @@ def post_detail(request, year, month, day, post):
         publish__day=day)
 
     return render(request,'blog/post/detail.html',{'post': post})
+
+@require_POST
+def post_comment(request, post_id):
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        status=Post.Status.PUBLISHED
+    )
+    
+    comment = None
+    form = CommentForm(data=request.POST)
+    
+    if form.is_valid():
+        # Create a Comment object without saving it to the database
+        comment = form.save(commit=False)
+        # Assign the post to the comment
+        comment.post = post
+        # Save the comment to the database
+        comment.save()
+    
+    return render(
+        request,
+        'blog/post/comment.html',
+        {
+            'post': post,
+            'form': form,
+            'comment': comment
+        }
+    )
+
