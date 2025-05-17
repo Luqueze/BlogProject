@@ -11,8 +11,7 @@ from .models import Post
 def post_share(request, post_id):
     # Recupera o post pelo ID
     post = get_object_or_404(
-        Post,
-        id=post_id,
+        Post,id=post_id,
         status=Post.Status.PUBLISHED
     )
     sent = False
@@ -89,8 +88,7 @@ def post_list(request,tag_slug=None):
 
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(
-        Post,
-        status=Post.Status.PUBLISHED,
+        Post,status=Post.Status.PUBLISHED,
         slug=post,
         publish__year=year,
         publish__month=month,
@@ -115,8 +113,7 @@ def post_detail(request, year, month, day, post):
 @require_POST
 def post_comment(request, post_id):
     post = get_object_or_404(
-        Post,
-        id=post_id,
+        Post,id=post_id,
         status=Post.Status.PUBLISHED
     )
     
