@@ -18,7 +18,7 @@ This repository contains a simple blog application built using **Django**. The p
 
 ## Installation
 
-To get started, clone this repository and follow the steps below:
+clone this repository and follow the steps below:
 
 ```bash
 git clone https://github.com/Luqueze/BlogProject.git
