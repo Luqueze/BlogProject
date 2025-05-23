@@ -9,6 +9,7 @@ This repository contains a simple blog application built using **Django**. The p
 - Pagination for easy navigation
 - Individual post detail view
 - User-friendly URLs with slugs
+- Different tags on each post
 
 ## Requirements 
 - Django `pip install django`
